@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ApplicationPackage SchemaVersion="0.1"
+	ProductType="Application"
+
+	AutodeskProduct="Maya"
+	Name="NodeTool"
+	Description="Autodesk Maya DICE"
+	AppVersion="1.7.3"
+	Author="mochio"
+	AppNameSpace="com.autodesk.exchange.maya.dice"
+	HelpFile=""
+	OnlineDocumentation="https://github.com/mochio326/DICE"
+
+	ProductCode="*"
+>
+	
+	<CompanyDetails Name="mochio"
+		Phone=" "
+		Url="https://github.com/mochio326"
+		Email="326mochio@gmail.com" />
+
+	<RuntimeRequirements SupportPath="./Contents" OS="win64|macOS|linux" Platform="Maya" SeriesMin="2012"/>
+
+	<Components>
+		<RuntimeRequirements SupportPath="./Contents" OS="win64|linux" Platform="Maya" SeriesMin="2013"/>
+		<ComponentEntry ModuleName="./scripts/userSetup.py" />
+	</Components>
+
+
+	<!-- Plug-ins -->
+	<Components>
+		<RuntimeRequirements SupportPath="./Contents" OS="win64" Platform="Maya" SeriesMin="2012" SeriesMax="2012" />
+		<MayaEnv expr="MAYA_PLUG_IN_PATH+:=plug-ins/win64_2012" />
+		<ComponentEntry ModuleName="./Contents/plug-ins/win64_2012/exprespy.mll" />
+	</Components>
+
+	<Components>
+		<RuntimeRequirements SupportPath="./Contents" OS="win64" Platform="Maya" SeriesMin="2013" SeriesMax="2013" />
+		<MayaEnv expr="MAYA_PLUG_IN_PATH+:=plug-ins/win64_2013" />
+		<ComponentEntry ModuleName="./Contents/plug-ins/win64_2013/exprespy.mll" />
+	</Components>
+
+	<Components>
+		<RuntimeRequirements SupportPath="./Contents" OS="win64" Platform="Maya" SeriesMin="2013.5" SeriesMax="2013.5" />
+		<MayaEnv expr="MAYA_PLUG_IN_PATH+:=plug-ins/win64_2013.5" />
+		<ComponentEntry ModuleName="./Contents/plug-ins/win64_2013.5/exprespy.mll" />
+	</Components>
+
+	<Components>
+		<RuntimeRequirements SupportPath="./Contents" OS="win64" Platform="Maya" SeriesMin="2014" SeriesMax="2014" />
+		<MayaEnv expr="MAYA_PLUG_IN_PATH+:=plug-ins/win64_2014" />
+		<ComponentEntry ModuleName="./Contents/plug-ins/win64_2014/exprespy.mll" />
+	</Components>
+
+	<Components>
+		<RuntimeRequirements SupportPath="./Contents" OS="win64" Platform="Maya" SeriesMin="2015" SeriesMax="2015" />
+		<MayaEnv expr="MAYA_PLUG_IN_PATH+:=plug-ins/win64_2015" />
+		<ComponentEntry ModuleName="./Contents/plug-ins/win64_2015/exprespy.mll" />
+	</Components>
+
+	<Components>
+		<RuntimeRequirements SupportPath="./Contents" OS="win64" Platform="Maya" SeriesMin="2016" SeriesMax="2016" />
+		<MayaEnv expr="MAYA_PLUG_IN_PATH+:=plug-ins/win64_2016" />
+		<ComponentEntry ModuleName="./Contents/plug-ins/win64_2016/exprespy.mll" />
+	</Components>
+
+	<Components>
+		<RuntimeRequirements SupportPath="./Contents" OS="win64" Platform="Maya" SeriesMin="2016.5" SeriesMax="2016.5" />
+		<MayaEnv expr="MAYA_PLUG_IN_PATH+:=plug-ins/win64_2016.5" />
+		<ComponentEntry ModuleName="./Contents/plug-ins/win64_2016.5/exprespy.mll" />
+	</Components>
+
+	<Components>
+		<RuntimeRequirements SupportPath="./Contents" OS="win64" Platform="Maya" SeriesMin="2017" SeriesMax="2017" />
+		<MayaEnv expr="MAYA_PLUG_IN_PATH+:=plug-ins/win64_2017" />
+		<ComponentEntry ModuleName="./Contents/plug-ins/win64_2017/exprespy.mll" />
+	</Components>
+
+	<Components>
+		<RuntimeRequirements SupportPath="./Contents" OS="win64" Platform="Maya" SeriesMin="2018" SeriesMax="2018" />
+		<MayaEnv expr="MAYA_PLUG_IN_PATH+:=plug-ins/win64_2018" />
+		<ComponentEntry ModuleName="./Contents/plug-ins/win64_2018/exprespy.mll" />
+	</Components>
+
+	<Components>
+		<RuntimeRequirements SupportPath="./Contents" OS="win64" Platform="Maya" SeriesMin="2019" SeriesMax="2019" />
+		<MayaEnv expr="MAYA_PLUG_IN_PATH+:=plug-ins/win64_2019" />
+		<ComponentEntry ModuleName="./Contents/plug-ins/win64_2019/exprespy.mll" />
+	</Components>
+
+		<Components>
+		<RuntimeRequirements SupportPath="./Contents" OS="linux64" Platform="Maya" SeriesMin="2012" SeriesMax="2012" />
+		<MayaEnv expr="MAYA_PLUG_IN_PATH+:=plug-ins/linux64_2012" />
+		<ComponentEntry ModuleName="./Contents/plug-ins/linux64_2012/exprespy.mll" />
+	</Components>
+
+	<Components>
+		<RuntimeRequirements SupportPath="./Contents" OS="linux64" Platform="Maya" SeriesMin="2013" SeriesMax="2013" />
+		<MayaEnv expr="MAYA_PLUG_IN_PATH+:=plug-ins/linux64_2013" />
+		<ComponentEntry ModuleName="./Contents/plug-ins/linux64_2013/exprespy.mll" />
+	</Components>
+
+	<Components>
+		<RuntimeRequirements SupportPath="./Contents" OS="linux64" Platform="Maya" SeriesMin="2013.5" SeriesMax="2013.5" />
+		<MayaEnv expr="MAYA_PLUG_IN_PATH+:=plug-ins/linux64_2013.5" />
+		<ComponentEntry ModuleName="./Contents/plug-ins/linux64_2013.5/exprespy.mll" />
+	</Components>
+
+	<Components>
+		<RuntimeRequirements SupportPath="./Contents" OS="linux64" Platform="Maya" SeriesMin="2014" SeriesMax="2014" />
+		<MayaEnv expr="MAYA_PLUG_IN_PATH+:=plug-ins/linux64_2014" />
+		<ComponentEntry ModuleName="./Contents/plug-ins/linux64_2014/exprespy.mll" />
+	</Components>
+
+	<Components>
+		<RuntimeRequirements SupportPath="./Contents" OS="linux64" Platform="Maya" SeriesMin="2015" SeriesMax="2015" />
+		<MayaEnv expr="MAYA_PLUG_IN_PATH+:=plug-ins/linux64_2015" />
+		<ComponentEntry ModuleName="./Contents/plug-ins/linux64_2015/exprespy.mll" />
+	</Components>
+
+	<Components>
+		<RuntimeRequirements SupportPath="./Contents" OS="linux64" Platform="Maya" SeriesMin="2016" SeriesMax="2016" />
+		<MayaEnv expr="MAYA_PLUG_IN_PATH+:=plug-ins/linux64_2016" />
+		<ComponentEntry ModuleName="./Contents/plug-ins/linux64_2016/exprespy.mll" />
+	</Components>
+
+	<Components>
+		<RuntimeRequirements SupportPath="./Contents" OS="linux64" Platform="Maya" SeriesMin="2016.5" SeriesMax="2016.5" />
+		<MayaEnv expr="MAYA_PLUG_IN_PATH+:=plug-ins/linux64_2016.5" />
+		<ComponentEntry ModuleName="./Contents/plug-ins/linux64_2016.5/exprespy.mll" />
+	</Components>
+
+	<Components>
+		<RuntimeRequirements SupportPath="./Contents" OS="linux64" Platform="Maya" SeriesMin="2017" SeriesMax="2017" />
+		<MayaEnv expr="MAYA_PLUG_IN_PATH+:=plug-ins/linux64_2017" />
+		<ComponentEntry ModuleName="./Contents/plug-ins/linux64_2017/exprespy.mll" />
+	</Components>
+
+	<Components>
+		<RuntimeRequirements SupportPath="./Contents" OS="linux64" Platform="Maya" SeriesMin="2018" SeriesMax="2018" />
+		<MayaEnv expr="MAYA_PLUG_IN_PATH+:=plug-ins/linux64_2018" />
+		<ComponentEntry ModuleName="./Contents/plug-ins/linux64_2018/exprespy.mll" />
+	</Components>
+
+	<Components>
+		<RuntimeRequirements SupportPath="./Contents" OS="linux64" Platform="Maya" SeriesMin="2019" SeriesMax="2019" />
+		<MayaEnv expr="MAYA_PLUG_IN_PATH+:=plug-ins/linux64_2019" />
+		<ComponentEntry ModuleName="./Contents/plug-ins/linux64_2019/exprespy.mll" />
+	</Components>
+
+
+</ApplicationPackage>

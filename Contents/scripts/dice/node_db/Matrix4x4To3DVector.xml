@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Node Group='test' Label="3D Vector to Scalar" Width="200">
+    <Port Type="out" Label="Vector1" ValueType="Vector3d" DefaultValue="api.MVector(1, 0, 0)" />
+    <Port Type="out" Label="Vector2" ValueType="Vector3d" DefaultValue="api.MVector(0, 1, 0)" />
+    <Port Type="out" Label="Vector3" ValueType="Vector3d" DefaultValue="api.MVector(0, 0, 1)" />
+    <Port Type="out" Label="Translation" ValueType="Vector3d" DefaultValue="api.MVector(0, 0, 0)" />
+    <Port Type="in" Label="Matrix" ValueType="Matrix4x4" DefaultValue="api.MMatrix()" />
+    <Code>
+        <Vector1>
+            {{Vector1}} = api.MVector({{Matrix}}[0], {{Matrix}}[1], {{Matrix}}[2])
+        </Vector1>
+        <Vector2>
+            {{Vector2}} = api.MVector({{Matrix}}[4], {{Matrix}}[5], {{Matrix}}[6])
+        </Vector2>
+        <Vector3>
+            {{Vector3}} = api.MVector({{Matrix}}[8], {{Matrix}}[9], {{Matrix}}[10])
+        </Vector3>
+        <Translation>
+            {{Translation}} = api.MVector({{Matrix}}[12], {{Matrix}}[13], {{Matrix}}[14])
+        </Translation>
+    </Code>
+</Node>

@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Node Group='test' Label="Scalar to 3D Vector" Width="180">
+    <Port Type="out" Label="Vector" ValueType="Vector3d" DefaultValue="0" />
+    <Port Type="in" Label="X" ValueType="Scalar" DefaultValue="0" />
+    <Port Type="in" Label="Y" ValueType="Scalar" DefaultValue="0" />
+    <Port Type="in" Label="Z" ValueType="Scalar" DefaultValue="0" />
+    <Code>
+        <Vector>{{Vector}} = api.MVector({{X}}, {{Y}}, {{Z}})</Vector>
+    </Code>
+</Node>

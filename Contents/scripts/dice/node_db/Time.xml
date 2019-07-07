@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Node Group='test' Label="Time">
+    <Port Type="out" Label="Out" ValueType="Scalar" DefaultValue="3" />
+    <Code>
+    <Out>{{Out}} = time1.outTime</Out>
+    </Code>
+</Node>

@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Node Group='test' Label="3D Vector to Scalar" Width="180">
+    <Port Type="out" Label="X" ValueType="Scalar" DefaultValue="0" />
+    <Port Type="out" Label="Y" ValueType="Scalar" DefaultValue="0" />
+    <Port Type="out" Label="Z" ValueType="Scalar" DefaultValue="0" />
+    <Port Type="in" Label="vector" ValueType="Vector3d" DefaultValue="0" />
+    <Code>
+        <X>{{X}} = {{vector}}.x</X>
+        <Y>{{Y}} = {{vector}}.y</Y>
+        <Z>{{Z}} = {{vector}}.z</Z>
+    </Code>
+</Node>

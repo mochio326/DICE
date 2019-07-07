@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Node Group='test' Label="Tan">
+    <Port Type="in" Label="In" ValueType="Scalar" DefaultValue="0" />
+    <Port Type="out" Label="Out" ValueType="Scalar" DefaultValue="0" />
+    <Code>
+    <Out>{{Out}} = math.tan({{In}})</Out>
+    </Code>
+</Node>
