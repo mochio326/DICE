@@ -13,6 +13,10 @@ class NodeLabel(QtWidgets.QGraphicsItem):
         super(NodeLabel, self).__init__(parent)
         self.rect = QtCore.QRect(0, 0, self.node.width, 20)
         self.label = label
+        self.bg_color_l = None
+        self.bg_color_r = None
+        self.init_bg_color()
+
         # Pen.
         self.pen = QtGui.QPen()
         self.pen.setStyle(QtCore.Qt.SolidLine)
@@ -20,10 +24,15 @@ class NodeLabel(QtWidgets.QGraphicsItem):
         self.pen.setColor(QtGui.QColor(200, 200, 200, 255))
 
         self.brush = QtGui.QLinearGradient(0, 0, self.node.width, 0)
-        self.brush.setColorAt(0.0, QtGui.QColor(68, 160, 122))
-        self.brush.setColorAt(1.0, QtGui.QColor(60, 60, 60, 255))
+
+    def init_bg_color(self):
+        self.bg_color_l = QtGui.QColor(68, 160, 122)
+        self.bg_color_r = self.node.bg_color
 
     def paint(self, painter, option, widget):
+        self.brush.setColorAt(0.0, self.bg_color_l)
+        self.brush.setColorAt(1.0, self.bg_color_r)
+
         painter.setBrush(self.brush)
         painter.setPen(QtCore.Qt.NoPen)
         painter.drawPath(self.shape())
@@ -104,6 +113,29 @@ class Node(QtWidgets.QGraphicsObject):
     def label(self, v):
         self._label_widget.label = v
 
+    @property
+    def label_bg_color_l(self):
+        return self._label_widget.bg_color_l
+
+    @label_bg_color_l.setter
+    def label_bg_color_l(self, v):
+        """
+        :param v:QtGui.QColor
+        """
+        self._label_widget.bg_color_l = v
+
+    @property
+    def label_bg_color_r(self):
+        return self._label_widget.bg_color_r
+
+    @label_bg_color_r.setter
+    def label_bg_color_r(self, v):
+        """
+        :param v:QtGui.QColor
+        """
+        self._label_widget.bg_color_r = v
+
+
 
     def __init__(self, name='', width=140, height=60, label='node'):
         super(Node, self).__init__()
@@ -114,6 +146,7 @@ class Node(QtWidgets.QGraphicsObject):
         self.height = height
         self.drag = False
         self.port_cls = port.Port
+        self.bg_color = QtGui.QColor(60, 60, 60, 255)
 
         self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable)
         self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable)
@@ -121,7 +154,6 @@ class Node(QtWidgets.QGraphicsObject):
         # Brush.
         self.brush = QtGui.QBrush()
         self.brush.setStyle(QtCore.Qt.SolidPattern)
-        self.brush.setColor(QtGui.QColor(60, 60, 60, 255))
 
         # Pen.
         self.pen = QtGui.QPen()
@@ -161,6 +193,7 @@ class Node(QtWidgets.QGraphicsObject):
         return QtCore.QRectF(0, 0, self.width, self.height)
 
     def paint(self, painter, option, widget):
+        self.brush.setColor(self.bg_color)
         painter.setBrush(self.brush)
         if self.isSelected():
             painter.setPen(self.sel_pen)
