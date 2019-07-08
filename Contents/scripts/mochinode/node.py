@@ -135,7 +135,9 @@ class Node(QtWidgets.QGraphicsObject):
         """
         self._label_widget.bg_color_r = v
 
-
+    @property
+    def init_bg_color(self):
+        return QtGui.QColor(60, 60, 60, 255)
 
     def __init__(self, name='', width=140, height=60, label='node'):
         super(Node, self).__init__()
@@ -146,7 +148,7 @@ class Node(QtWidgets.QGraphicsObject):
         self.height = height
         self.drag = False
         self.port_cls = port.Port
-        self.bg_color = QtGui.QColor(60, 60, 60, 255)
+        self.bg_color = self.init_bg_color
 
         self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable)
         self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable)
@@ -200,6 +202,10 @@ class Node(QtWidgets.QGraphicsObject):
         else:
             painter.setPen(self.pen)
         painter.drawRoundedRect(self.rect, 10.0, 10.0)
+
+    def change_init_bg_color(self):
+        self.bg_color = self.init_bg_color
+        self._label_widget.init_bg_color()
 
     def deploying_port(self):
         _port_y = self.port_init_y
