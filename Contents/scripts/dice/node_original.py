@@ -177,20 +177,34 @@ class GetSetBaseNode(DiceNodeBase):
         self.serial_number = 0
         self.attr_path = ''
         super(GetSetBaseNode, self).__init__(name=name, label=label)
+        self.error_color()
+
+    def error_color(self):
+        self.label_bg_color_l = QtCore.Qt.red
+        self.label_bg_color_r = QtCore.Qt.red
+        self.bg_color = QtGui.QColor(180, 40, 40)
 
     def mouseDoubleClickEvent(self, event):
         pos = event.lastScreenPos()
         text = input_target_attr_path(self.__class__.__name__, self.attr_path, self)
         if text is None:
             return
+
+        _attr_name = text.split('.')[1]
+        _value_type = get_attr_value_type(text)
+
+        # ポートが既に接続済みだった場合は同じ値のタイプ同士の変更のみ許可
+        if len(self.port['Value'].lines) != 0:
+            if self.port['Value'].value_type != _value_type:
+                return
+
         self.attr_path = text
 
-        _attr_name = self.attr_path.split('.')[1]
-        _value_type = get_attr_value_type(self.attr_path)
         self.port['Value'].value_type = _value_type
         self.port['Value'].color = getattr(PortColor(), _value_type)
         self.port['Value'].change_to_basic_color()
 
+        self.change_init_bg_color()
         self.update_label()
         self.data_changed.emit()
 
