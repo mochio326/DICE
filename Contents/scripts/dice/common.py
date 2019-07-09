@@ -107,7 +107,16 @@ def load_save_data(data, view):
         for _p in _n.children_ports_all_iter():
             _p.create_temp_line()
 
+    check_all_nodes_error(view)
+
     return nodes
+
+
+def check_all_nodes_error(view):
+    # エラーがあればノードの色を変化させる
+    for n in Node.scene_nodes_iter(view):
+        if hasattr(n, 'check_error'):
+            n.check_error()
 
 
 def scene_load(view):

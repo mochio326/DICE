@@ -45,27 +45,30 @@ def input_target_attr_path(title, def_value, node):
     if not ok:
         return None
 
-    parent_node = node.top_level_widget.parent_node
+    # parent_node = node.top_level_widget.parent_node
+    #
+    # sp = text.split('.')
+    # if len(sp) != 2:
+    #     return None
+    #
+    # node_name = sp[0]
+    # if node_name == '':
+    #     node_name = parent_node
+    # attr_name = sp[1]
+    #
+    # if len(cmds.ls(node_name)) != 1:
+    #     return None
+    #
+    # if not cmds.attributeQuery(attr_name, node=node_name, ex=True):
+    #     return None
+    #
+    # attr_path = '{0}.{1}'.format(node_name, attr_name)
+    #
+    # q = get_attr_value_type(attr_path)
+    # if q is None:
+    #     return None
 
-    sp = text.split('.')
-    if len(sp) != 2:
-        return None
-
-    node_name = sp[0]
-    if node_name == '':
-        node_name = parent_node
-    attr_name = sp[1]
-
-    if len(cmds.ls(node_name)) != 1:
-        return None
-
-    if not cmds.attributeQuery(attr_name, node=node_name, ex=True):
-        return None
-
-    attr_path = '{0}.{1}'.format(node_name, attr_name)
-
-    q = get_attr_value_type(attr_path)
-    if q is None:
+    if get_attr_full_path(text, node) is None:
         return None
 
     return text
@@ -150,6 +153,29 @@ class DiceNodeBase(Node):
         return data
 
 
+def get_attr_full_path(attr_path, node_widget):
+
+    node_path, attr_name = attr_path.split('.')
+
+    # DICEが記録されているノード自身を戻す
+    if '' == node_path:
+        node_path = node_widget.top_level_widget.parent_node
+
+    if len(cmds.ls(node_path)) != 1:
+        return None
+
+    if not cmds.attributeQuery(attr_name, node=node_path, ex=True):
+        return None
+
+    attr_full_path = '{0}.{1}'.format(node_path, attr_name)
+
+    _value_type = get_attr_value_type(attr_full_path)
+    if _value_type is None:
+        return None
+
+    return attr_full_path
+
+
 class GetSetBaseNode(DiceNodeBase):
 
     @property
@@ -164,6 +190,7 @@ class GetSetBaseNode(DiceNodeBase):
 
     @property
     def true_attr_path(self):
+        # DICEが記録されているノード自身を戻す
         if '' == self.attr_path.split('.')[0]:
             return self.attr_path.replace('.', self.top_level_widget.parent_node + '.')
         return self.attr_path
@@ -176,6 +203,7 @@ class GetSetBaseNode(DiceNodeBase):
     def __init__(self, name='', label='node'):
         self.serial_number = 0
         self.attr_path = ''
+        self.error = False
         super(GetSetBaseNode, self).__init__(name=name, label=label)
         self.error_color()
 
@@ -184,6 +212,15 @@ class GetSetBaseNode(DiceNodeBase):
         self.label_bg_color_r = QtCore.Qt.red
         self.bg_color = QtGui.QColor(180, 40, 40)
 
+    def check_error(self):
+        if get_attr_full_path(self.attr_path, self) is None:
+            self.error_color()
+            self.error = True
+        else:
+            self.change_init_bg_color()
+            self.error = False
+        self.update()
+
     def mouseDoubleClickEvent(self, event):
         pos = event.lastScreenPos()
         text = input_target_attr_path(self.__class__.__name__, self.attr_path, self)
@@ -191,7 +228,7 @@ class GetSetBaseNode(DiceNodeBase):
             return
 
         _attr_name = text.split('.')[1]
-        _value_type = get_attr_value_type(text)
+        _value_type = get_attr_value_type(get_attr_full_path(text, self))
 
         # ポートが既に接続済みだった場合は同じ値のタイプ同士の変更のみ許可
         if len(self.port['Value'].lines) != 0:
@@ -204,7 +241,7 @@ class GetSetBaseNode(DiceNodeBase):
         self.port['Value'].color = getattr(PortColor(), _value_type)
         self.port['Value'].change_to_basic_color()
 
-        self.change_init_bg_color()
+        self.check_error()
         self.update_label()
         self.data_changed.emit()
 

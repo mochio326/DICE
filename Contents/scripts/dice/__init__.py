@@ -94,16 +94,16 @@ class Window(MayaQWidgetDockableMixin, QtWidgets.QWidget):
         テキストエリアに日本語を入力中（IME未確定状態）にMayaがクラッシュする場合があった。
         textChanged.connect をやめ、例えば focusOut や エンターキー押下を発火条件にすることで対応
         '''
-        self.name_fld.textChanged.connect(self.create_node_label)
+        self.name_fld.textChanged.connect(self.__create_node_label)
 
         def _focus_out(event):
-            self.create_node_label()
+            self.__create_node_label()
 
         def _key_press(event, widget=None):
             QtWidgets.QLineEdit.keyPressEvent(widget, event)
             key = event.key()
             if (key == QtCore.Qt.Key_Enter) or (key == QtCore.Qt.Key_Return):
-                self.create_node_label()
+                self.__create_node_label()
 
         self.name_fld.focusOutEvent = _focus_out
         self.name_fld.keyPressEvent = functools.partial(_key_press, widget=self.name_fld)
@@ -114,58 +114,51 @@ class Window(MayaQWidgetDockableMixin, QtWidgets.QWidget):
         self.central_layout.addStretch(1)
 
         self.load_data()
-        self.create_node_label()
-        self.create_job()
+        self.__create_node_label()
+        self.__create_job()
 
-    def create_node_label(self):
+    def __create_node_label(self):
         for child in self.findChildren(DragLabel):
             self.node_list_layout.removeWidget(child)
             child.setVisible(False)
             child.setParent(None)
             child.deleteLater()
         filter_stg = self.name_fld.text()
-        self.create_original_node_label(filter_stg)
-        self.create_xml_node_label(filter_stg)
+        self.__create_original_node_label(filter_stg)
+        self.__create_xml_node_label(filter_stg)
 
-    def create_job(self):
+    def __create_job(self):
         self.job = cmds.scriptJob(attributeChange=[self.dice_attr_path, self.load_data])
 
-
-
-    def kill_job(self):
+    def __kill_job(self):
         cmds.scriptJob(kill=self.job, force=True)
 
     def closeEvent(self, e):
-        self.kill_job()
+        self.__kill_job()
 
-    def create_original_node_label(self, filter_stg=''):
+    def __create_original_node_label(self, filter_stg=''):
         cls_ls = ['GetNode', 'SetNode', 'PinNode', 'ScalarNode']
         label_ls = ['GetData', 'SetData', 'Pin', 'Scalar']
 
         for _c, _l in zip(cls_ls, label_ls):
             if filter_stg != '' and filter_stg.lower() not in _l.lower():
                 continue
-            self.add_drag_label(_l, '{0}::'.format(_c))
+            self.__add_drag_label(_l, '{0}::'.format(_c))
 
-        # self.add_drag_label('GetData', 'GetNode::')
-        # self.add_drag_label('SetData', 'SetNode::')
-        # self.add_drag_label('Pin', 'PinNode::')
-        # self.add_drag_label('Scalar', 'ScalarNode::')
-
-    def create_xml_node_label(self, filter_stg=''):
+    def __create_xml_node_label(self, filter_stg=''):
         for _f in node_xml.get_node_file_list():
             label = node_xml.get_node_label(_f)
             if filter_stg != '' and filter_stg.lower() not in label.lower():
                 continue
             file_name, _ = os.path.splitext(os.path.basename(_f))
-            self.add_drag_label(label, 'XmlNode::{0}'.format(file_name))
+            self.__add_drag_label(label, 'XmlNode::{0}'.format(file_name))
 
-    def add_drag_label(self, label, drag_text):
+    def __add_drag_label(self, label, drag_text):
         _button = DragLabel(label, drag_text)
         self.node_list_layout.addWidget(_button)
 
     def run(self):
-        self.kill_job()
+        self.__kill_job()
         cmds.undoInfo(openChunk=True)
         old_exp = cmds.listConnections(self.dice_attr_path, d=True)
         if old_exp is not None:
@@ -179,7 +172,7 @@ class Window(MayaQWidgetDockableMixin, QtWidgets.QWidget):
         self.dice_attr = common.get_save_data_from_scene_all(self.view)
         cmds.connectAttr(self.dice_attr_path, '{0}.dice'.format(expy, self.save_attr_name))
         cmds.undoInfo(closeChunk=True)
-        self.create_job()
+        self.__create_job()
 
     @property
     def dice_attr_path(self):

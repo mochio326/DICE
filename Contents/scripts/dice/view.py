@@ -4,7 +4,6 @@ import mochinode.view
 import uuid
 from . import common
 
-
 class DiceView(mochinode.view.View):
     focus_in = QtCore.Signal()
 
@@ -14,6 +13,9 @@ class DiceView(mochinode.view.View):
         self.drop_node = None
         super(DiceView, self).__init__(*args, **kwargs)
         self.setAcceptDrops(True)
+
+    def focusInEvent(self, e):
+        common.check_all_nodes_error(self)
 
     def dragMoveEvent(self, event):
         pos = self.mapToScene(event.pos())
