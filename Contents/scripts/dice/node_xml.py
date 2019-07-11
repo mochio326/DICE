@@ -49,7 +49,7 @@ class XmlNode(DiceNodeBase):
         code_str = format_code(self.code.text) + '\n'
         # まずはoutポートでラインが接続されているもののxml内のコードを収集
         for _p in self.out_ports:
-            if len(_p.lines) == 0:
+            if not _p.lines:
                 continue
             _out_code = self.code.findtext(_p.name)
             if _out_code != '':
@@ -61,13 +61,13 @@ class XmlNode(DiceNodeBase):
             code_str = code_str.replace('{{' + _p.name + '}}', node_id)
 
         for _p in self.in_ports:
-            if len(_p.lines) > 0:
+            if not _p.lines:
+                # ポートにラインがない場合はデフォルト値
+                replace_str = str(_p.value)
+            else:
                 source_port = _p.lines[0].source
                 node_id = 'n' + str(source_port.node.serial_number)
                 replace_str = node_id + '_' + source_port.name
-            else:
-                # ポートにラインがない場合はデフォルト値
-                replace_str = str(_p.value)
             code_str = code_str.replace('{{' + _p.name + '}}', replace_str)
         return code_str
 
