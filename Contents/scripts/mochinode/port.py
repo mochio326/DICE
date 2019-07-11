@@ -21,7 +21,7 @@ class PortExpandBox(QtWidgets.QGraphicsItem):
         self.pen.setColor(QtGui.QColor(125, 125, 125, 255))
 
     def paint(self, painter, option, widget):
-        if len(self.port.children_port) == 0:
+        if not self.port.children_port:
             self.setVisible(False)
             return
         self.setVisible(True)
@@ -128,10 +128,10 @@ class PortLabel(QtWidgets.QGraphicsItem):
         # height = height - font_metrics.descent()
 
         offset_parent = self.port.parent_port_count() * 20
-        if len(self.port.children_port) > 0:
-            offset_child = 10
-        else:
+        if not self.port.children_port:
             offset_child = 0
+        else:
+            offset_child = 10
 
         if self.port.type == 'in':
             self.text_align = QtCore.Qt.AlignLeft
@@ -246,7 +246,7 @@ class Port(QtWidgets.QGraphicsObject):
 
     def paint(self, painter, option, widget):
 
-        if len(self.lines) == 0:
+        if not self.lines:
             self.brush.setColor(QtGui.QColor(60, 60, 60, 255))
         else:
             for _l in self.lines:
@@ -320,7 +320,7 @@ class Port(QtWidgets.QGraphicsObject):
                 return _p
 
     def expand(self):
-        if len(self.children_port) == 0:
+        if not self.children_port:
             return
         self.children_port_expand = not self.children_port_expand
         self.delete_temp_line()

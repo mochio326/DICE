@@ -158,7 +158,7 @@ class View(QtWidgets.QGraphicsView):
         self.focus(self.add_items)
 
     def focus(self, items):
-        if len(items) == 0:
+        if not items:
             return
         self.resetMatrix()
         rect = QtCore.QRectF(0, 0, 0, 0)
