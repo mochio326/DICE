@@ -131,21 +131,25 @@ class GetSetBaseNode(DiceNodeBase):
 
     @property
     def target_attr_full_path(self):
-        _maya_node_id = self.target_node_id
-        # DICEが記録されているノード自身を戻す
-        if '' == _maya_node_id:
-            _maya_node_id = self.top_level_widget.parent_node
+        return self._get_attr_path(self.target_node_id, self.attr_name)
 
-        _target = cmds.ls(_maya_node_id)
+    def _get_attr_path(self, node, attr, error_returns_none=True):
+        #
+        if '' == node:
+            node = self.top_level_widget.parent_node
+        _target = cmds.ls(node)
         if not _target:
-            return None
+            if error_returns_none:
+                return None
+            return '???.{0}'.format(attr)
         else:
-            node_path = _target[0]
+            node = _target[0]
 
-        if not cmds.attributeQuery(self.attr_name, node=node_path, ex=True):
-            return None
+        if not cmds.attributeQuery(attr, node=node, ex=True):
+            if error_returns_none:
+                return None
 
-        return '{0}.{1}'.format(node_path, self.attr_name)
+        return '{0}.{1}'.format(node, attr)
 
     def load_data(self, save_data):
         self.attr_name = save_data['at']
@@ -194,10 +198,11 @@ class GetSetBaseNode(DiceNodeBase):
     def mouseDoubleClickEvent(self, event):
         # pos = event.lastScreenPos()
         target_node_id, attr_name = self.input_target_attr_path()
-        if target_node_id is None:
+        _full_path = self._get_attr_path(target_node_id, attr_name)
+        if _full_path is None:
             return
 
-        _value_type = get_attr_value_type(self.target_attr_full_path)
+        _value_type = get_attr_value_type(_full_path)
         if _value_type is None:
             return
 
@@ -217,8 +222,11 @@ class GetSetBaseNode(DiceNodeBase):
         self.data_changed.emit()
 
     def input_target_attr_path(self):
-        attr_full_path = self.target_attr_full_path
-        if attr_full_path is None:
+        if self.target_node_id != '' and self.attr_name != '':
+            attr_full_path = self._get_attr_path(self.target_node_id, self.attr_name, False)
+        elif self.target_node_id == '' and self.attr_name != '':
+            attr_full_path = '.{0}'.format(self.attr_name)
+        else:
             attr_full_path = ''
 
         text, ok = QtWidgets.QInputDialog.getText(self.scene().views()[0], self.__class__.__name__,
@@ -232,8 +240,8 @@ class GetSetBaseNode(DiceNodeBase):
 
         target_node, attr_name = text.split('.')
 
-        if self.target_attr_full_path is None:
-            return None, None
+        # if self.target_attr_full_path is None:
+        #     return None, None
 
         if target_node != '':
             # uuidベースで保持する
