@@ -230,7 +230,7 @@ def get_ui(name, weight_type):
 def main():
 
     select_nodes = cmds.ls(sl=True)
-    if len(select_nodes) == 0:
+    if not select_nodes:
         return
 
     dice_attr_name = 'dice_graph_data'
