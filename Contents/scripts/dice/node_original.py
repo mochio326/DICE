@@ -32,46 +32,9 @@ def get_attr_value_type(attr_path):
     elif _type in ['short2', 'short3', 'long2', 'long3', 'double2', 'double3', 'double4', 'float2', 'float3']:
         return 'Array'
 
-    Scalar = QtGui.QColor(79, 231, 79)
-    Polymorphic = QtCore.Qt.gray
+    # Polymorphic = QtCore.Qt.gray
 
     return None
-
-
-def input_target_attr_path(title, def_value, node):
-    text, ok = QtWidgets.QInputDialog.getText(node.scene().views()[0], title,
-                                              """Please enter the address of acquisition data"""
-                                              , text=def_value)
-    if not ok:
-        return None
-
-    # parent_node = node.top_level_widget.parent_node
-    #
-    # sp = text.split('.')
-    # if len(sp) != 2:
-    #     return None
-    #
-    # node_name = sp[0]
-    # if node_name == '':
-    #     node_name = parent_node
-    # attr_name = sp[1]
-    #
-    # if len(cmds.ls(node_name)) != 1:
-    #     return None
-    #
-    # if not cmds.attributeQuery(attr_name, node=node_name, ex=True):
-    #     return None
-    #
-    # attr_path = '{0}.{1}'.format(node_name, attr_name)
-    #
-    # q = get_attr_value_type(attr_path)
-    # if q is None:
-    #     return None
-
-    if get_attr_full_path(text, node) is None:
-        return None
-
-    return text
 
 
 class DiceNodeBase(Node):
@@ -153,29 +116,6 @@ class DiceNodeBase(Node):
         return data
 
 
-def get_attr_full_path(attr_path, node_widget):
-
-    node_path, attr_name = attr_path.split('.')
-
-    # DICEが記録されているノード自身を戻す
-    if '' == node_path:
-        node_path = node_widget.top_level_widget.parent_node
-
-    if len(cmds.ls(node_path)) != 1:
-        return None
-
-    if not cmds.attributeQuery(attr_name, node=node_path, ex=True):
-        return None
-
-    attr_full_path = '{0}.{1}'.format(node_path, attr_name)
-
-    _value_type = get_attr_value_type(attr_full_path)
-    if _value_type is None:
-        return None
-
-    return attr_full_path
-
-
 class GetSetBaseNode(DiceNodeBase):
 
     @property
@@ -185,24 +125,38 @@ class GetSetBaseNode(DiceNodeBase):
     @property
     def save_data(self):
         data = super(GetSetBaseNode, self).save_data
-        data['at'] = self.attr_path
+        data['at'] = self.attr_name
+        data['tn'] = self.target_node_id
         return data
 
     @property
-    def true_attr_path(self):
+    def target_attr_full_path(self):
+        _maya_node_id = self.target_node_id
         # DICEが記録されているノード自身を戻す
-        if '' == self.attr_path.split('.')[0]:
-            return self.attr_path.replace('.', self.top_level_widget.parent_node + '.')
-        return self.attr_path
+        if '' == _maya_node_id:
+            _maya_node_id = self.top_level_widget.parent_node
+
+        _target = cmds.ls(_maya_node_id)
+        if not _target:
+            return None
+        else:
+            node_path = _target[0]
+
+        if not cmds.attributeQuery(self.attr_name, node=node_path, ex=True):
+            return None
+
+        return '{0}.{1}'.format(node_path, self.attr_name)
 
     def load_data(self, save_data):
-        self.attr_path = save_data['at']
+        self.attr_name = save_data['at']
+        self.target_node_id = save_data['tn']
         super(GetSetBaseNode, self).load_data(save_data)
         self.update_label()
 
     def __init__(self, name='', label='node'):
         self.serial_number = 0
-        self.attr_path = ''
+        self.target_node_id = ''
+        self.attr_name = ''
         self.error = False
         super(GetSetBaseNode, self).__init__(name=name, label=label)
         self.error_color()
@@ -213,50 +167,82 @@ class GetSetBaseNode(DiceNodeBase):
         self.bg_color = QtGui.QColor(180, 40, 40)
 
     def check_error(self):
-        if get_attr_full_path(self.attr_path, self) is None:
+        if self.target_attr_full_path is None:
             self.error_color()
             self.error = True
         else:
             self.change_init_bg_color()
             self.error = False
+        self.update_label()
+        self.update()
+
+    def update_label(self):
+        if self.error:
+            self.label = self.default_node_label
+            self.port[self.default_port_label].label = self.default_port_label
+        else:
+            _n = self.target_node_id
+            if _n == '':
+                _n = 'Self'
+            else:
+                _n = cmds.ls(_n, sn=True)[0]
+            _prifix = self.default_node_label.split(' ')[0]
+            self.label = _prifix + ' ' + _n
+            self.port[self.default_port_label].label = self.attr_name
         self.update()
 
     def mouseDoubleClickEvent(self, event):
-        pos = event.lastScreenPos()
-        text = input_target_attr_path(self.__class__.__name__, self.attr_path, self)
-        if text is None:
+        # pos = event.lastScreenPos()
+        target_node_id, attr_name = self.input_target_attr_path()
+        if target_node_id is None:
             return
 
-        _attr_name = text.split('.')[1]
-        _value_type = get_attr_value_type(get_attr_full_path(text, self))
+        _value_type = get_attr_value_type(self.target_attr_full_path)
+        if _value_type is None:
+            return
 
         # ポートが既に接続済みだった場合は同じ値のタイプ同士の変更のみ許可
         if len(self.port['Value'].lines) != 0:
             if self.port['Value'].value_type != _value_type:
                 return
 
-        self.attr_path = text
+        self.attr_name = attr_name
+        self.target_node_id = target_node_id
 
         self.port['Value'].value_type = _value_type
         self.port['Value'].color = getattr(PortColor(), _value_type)
         self.port['Value'].change_to_basic_color()
 
         self.check_error()
-        self.update_label()
         self.data_changed.emit()
 
-    def update_label(self):
-        if self.attr_path == '':
-            self.label = self.default_node_label
-            self.port[self.default_port_label].label = self.default_port_label
-        else:
-            _n, _a = self.attr_path.split('.')
-            if _n == '':
-                _n = 'Self'
-            _prifix = self.default_node_label.split(' ')[0]
-            self.label = _prifix + ' ' + _n
-            self.port[self.default_port_label].label = _a
-        self.update()
+    def input_target_attr_path(self):
+        attr_full_path = self.target_attr_full_path
+        if attr_full_path is None:
+            attr_full_path = ''
+
+        text, ok = QtWidgets.QInputDialog.getText(self.scene().views()[0], self.__class__.__name__,
+                                                  """Please enter the address of acquisition data"""
+                                                  , text=attr_full_path)
+        if not ok:
+            return None, None
+
+        if not text.split('.'):
+            return None, None
+
+        target_node, attr_name = text.split('.')
+
+        if self.target_attr_full_path is None:
+            return None, None
+
+        if target_node != '':
+            # uuidベースで保持する
+            target_node = cmds.ls(target_node, uuid=True)
+            if not target_node:
+                return None, None
+            target_node = target_node[0]
+
+        return target_node, attr_name
 
 
 class GetNode(GetSetBaseNode):
@@ -272,10 +258,10 @@ class GetNode(GetSetBaseNode):
     def recalculation(self):
         code_str = ''
         for _p in self.ports:
-            if len(_p.lines) == 0:
+            if not _p.lines:
                 continue
             node_id = 'n' + str(_p.node.serial_number)
-            code_str = code_str + '{0}_{1} = {2}'.format(node_id, _p.name, self.true_attr_path)
+            code_str = code_str + '{0}_{1} = {2}'.format(node_id, _p.name, self.target_attr_full_path)
         return code_str
 
 
@@ -291,13 +277,13 @@ class SetNode(GetSetBaseNode):
     def recalculation(self):
         code_str = ''
         for _p in self.ports:
-            if len(_p.lines) == 0:
+            if not _p.lines:
                 continue
             source_port = _p.lines[0].source
             node_id = 'n' + str(source_port.node.serial_number)
             in_value = node_id + '_' + source_port.name
 
-            code_str = code_str + '{0} = {1}'.format(self.true_attr_path, in_value)
+            code_str = code_str + '{0} = {1}'.format(self.target_attr_full_path, in_value)
         return code_str
 
 
@@ -315,16 +301,16 @@ class PinNode(DiceNodeBase):
         code_str = ''
         self_node_id = 'n' + self.id.replace('-', '')
         for _p in self.in_ports:
-            if len(_p.lines) > 0:
+            if not _p.lines:
+                # ポートにラインがない場合は直値
+                in_value = str(_p.value)
+            else:
                 source_port = _p.lines[0].source
                 node_id = 'n' + source_port.node.id.replace('-', '')
                 in_value = node_id + '_' + source_port.name
-            else:
-                # ポートにラインがない場合は直値
-                in_value = str(_p.value)
 
         for _p in self.out_ports:
-            if len(_p.lines) == 0:
+            if not _p.lines:
                 continue
             code_str = '{0}_out = {1}'.format(self_node_id, in_value)
 
@@ -377,7 +363,7 @@ class ScalarNode(DiceNodeBase):
     def recalculation(self):
         code_str = ''
         for _p in self.ports:
-            if len(_p.lines) == 0:
+            if not _p.lines:
                 continue
             node_id = 'n' + str(_p.node.serial_number)
             code_str = code_str + '{0}_{1} = {2}'.format(node_id, _p.name, self.value)
