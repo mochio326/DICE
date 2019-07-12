@@ -212,6 +212,8 @@ class GetSetBaseNode(DiceNodeBase):
                 return
 
         self.attr_name = attr_name
+        if target_node_id == self.top_level_widget.parent_node_id:
+            target_node_id = ''
         self.target_node_id = target_node_id
 
         self.port['Value'].value_type = _value_type

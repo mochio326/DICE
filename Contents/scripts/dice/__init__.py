@@ -55,11 +55,11 @@ class Window(MayaQWidgetDockableMixin, QtWidgets.QWidget):
 
     @property
     def parent_node(self):
-        return cmds.ls(self._parent_node_id)[0]
+        return cmds.ls(self.parent_node_id)[0]
 
     def __init__(self, parent_node, save_attr_name):
         super(Window, self).__init__()
-        self._parent_node_id = cmds.ls(parent_node, uuid=True)[0]
+        self.parent_node_id = cmds.ls(parent_node, uuid=True)[0]
         self.save_attr_name = save_attr_name
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
         self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
