@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<Node Group='test' Label="True">
-    <Port Type="out" Label="True" ValueType="Bool" DefaultValue="True" />
-    <Code>
-    <True>{{True}} = True</True>
-    </Code>
-</Node>

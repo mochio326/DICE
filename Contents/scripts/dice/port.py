@@ -5,7 +5,7 @@ from mochinode.port import Port as OriginalPort
 
 class PortColor(object):
     Scalar = QtGui.QColor(79, 231, 79)
-    Bool = QtGui.QColor(231, 129, 0)
+    Boolean = QtGui.QColor(231, 129, 0)
     Str = QtGui.QColor(0, 0, 255)
     Polymorphic = QtCore.Qt.gray
     Vector3d = QtGui.QColor(201, 201, 26)

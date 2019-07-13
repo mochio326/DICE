@@ -142,8 +142,8 @@ class Window(MayaQWidgetDockableMixin, QtWidgets.QWidget):
         self.__kill_job()
 
     def __create_original_node_label(self, filter_stg=''):
-        cls_ls = ['GetNode', 'SetNode', 'PinNode', 'ScalarNode']
-        label_ls = ['GetData', 'SetData', 'Pin', 'Scalar']
+        cls_ls = ['GetNode', 'SetNode', 'PinNode', 'ScalarNode', 'BooleanNode']
+        label_ls = ['GetData', 'SetData', 'Pin', 'Scalar', 'Boolean']
 
         for _c, _l in zip(cls_ls, label_ls):
             if filter_stg != '' and filter_stg.lower() not in _l.lower():
@@ -165,6 +165,7 @@ class Window(MayaQWidgetDockableMixin, QtWidgets.QWidget):
     def run(self):
         self.__kill_job()
         cmds.undoInfo(openChunk=True)
+        _sel_nodes = cmds.ls(sl=True)
         old_exp = cmds.listConnections(self.dice_attr_path, d=True)
         if old_exp is not None:
             cmds.delete(old_exp)
@@ -176,6 +177,7 @@ class Window(MayaQWidgetDockableMixin, QtWidgets.QWidget):
 
         self.dice_attr = common.get_save_data_from_scene_all(self.view)
         cmds.connectAttr(self.dice_attr_path, '{0}.dice'.format(expy, self.save_attr_name))
+        cmds.select(_sel_nodes)
         cmds.undoInfo(closeChunk=True)
         self.__create_job()
 
