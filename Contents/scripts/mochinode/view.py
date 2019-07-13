@@ -186,6 +186,12 @@ class View(QtWidgets.QGraphicsView):
             self.add_items.append(_w)
             self.scene().addItem(_w)
 
+            _shadow = QtWidgets.QGraphicsDropShadowEffect(self)
+            _shadow.setBlurRadius(10)
+            _shadow.setOffset(3, 3)
+            _shadow.setColor(QtGui.QColor(10, 10, 10, 150))
+            _w.setGraphicsEffect(_shadow)
+
     def remove_item(self, widget):
         if not isinstance(widget, list):
             widget = [widget]
