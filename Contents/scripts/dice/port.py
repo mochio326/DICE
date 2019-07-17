@@ -31,19 +31,27 @@ class Port(OriginalPort):
         if self.value_type == self.free_type_port and port.value_type == self.free_type_port:
             return False
 
-        # もしフリータイプのポートだった場合に接続が許可されるようにタイプを
+        # もしフリータイプのポートだった場合にベース関数側で接続が許可されるようにタイプを
         # 一時的に偽装する
         _self_changed = False
         _port_changed = False
         if self.value_type == self.free_type_port:
+            if self.node.free_port_can_connection_types is not None:
+                if port.value_type not in self.node.free_port_can_connection_types:
+                    return False
             self.value_type = port.value_type
             _self_changed = True
+
         if port.value_type == self.free_type_port:
+            if port.node.free_port_can_connection_types is not None:
+                if self.value_type not in port.node.free_port_can_connection_types:
+                    return False
             port.value_type = self.value_type
             _port_changed = True
 
         v = super(Port, self).can_connection(port)
 
+        # 確認用に一時的に偽装していただけなので、ポートの型はもとに戻しておく
         if _self_changed:
             self.value_type = self.default_value_type
         if _port_changed:
