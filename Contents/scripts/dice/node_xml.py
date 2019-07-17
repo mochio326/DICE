@@ -40,6 +40,9 @@ class XmlNode(DiceNodeBase):
 
         # self.code = format_code(tree.find('Code').text)
         self.code = tree.find('Code')
+        _free_port_can_connection_types = tree.findtext('PolymorphicList')
+        if _free_port_can_connection_types is not None:
+            self.free_port_can_connection_types = _free_port_can_connection_types.split(',')
         p = tree.findall('Port')
         create_ports_for_xml(p, self)
         self.deploying_port()
@@ -53,7 +56,7 @@ class XmlNode(DiceNodeBase):
                 continue
             _out_code = self.code.findtext(_p.name)
             if _out_code != '':
-                code_str = format_code(_out_code) + '\n'
+                code_str = code_str + format_code(_out_code) + '\n'
 
         # コード内の{{}}で囲まれているポート名をexprespy内の変数に置き換える
         for _p in self.out_ports:
