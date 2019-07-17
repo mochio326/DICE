@@ -225,6 +225,7 @@ class View(QtWidgets.QGraphicsView):
 
         _pos = self.mapToScene(0, 0)
 
+        _pos_dict = {}
         animation_group = QtCore.QParallelAnimationGroup(self)
         for _n in node.Node.scene_nodes_iter(self):
             _d = xdot_data.get(_n.id)
@@ -240,9 +241,17 @@ class View(QtWidgets.QGraphicsView):
             animation.setEndValue(QtCore.QPointF(x, y))
             animation_group.addAnimation(animation)
 
+            _pos_dict[_n.id] = [x, y]
+
         self._animation_preprocess()
         animation_group.start()
         animation_group.finished.connect(self._animation_postprocess)
+
+        # アニメーションするだけではノードの位置が更新されないらしい
+        # ので、アニメーション終了後に改めて位置をセットしておく
+        for _n in node.Node.scene_nodes_iter(self):
+            _n.setX(_pos_dict[_n.id][0])
+            _n.setY(_pos_dict[_n.id][1])
 
     def _animation_preprocess(self):
         for _l in line.TempLine.scene_lines_iter(self):
