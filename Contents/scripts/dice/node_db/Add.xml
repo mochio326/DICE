@@ -6,5 +6,5 @@
     <Code>
         <Out>{{Out}} = {{Int1}} + {{Int2}}</Out>
     </Code>
-    <PolymorphicList ValueType=""/>
+    <PolymorphicList>Scalar,Str,Vector3d</PolymorphicList>
 </Node>
