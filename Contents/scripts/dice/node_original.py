@@ -49,6 +49,8 @@ class DiceNodeBase(Node):
 
     def __init__(self, *args, **kwargs):
         self.serial_number = 0
+        # フリータイプのポートがノードにある場合に接続可能なタイプを保持
+        self.free_port_can_connection_types = None
         super(DiceNodeBase, self).__init__(*args, **kwargs)
         self.port_cls = Port
 
@@ -172,7 +174,6 @@ class GetSetBaseNode(DiceNodeBase):
         self.label_bg_color_l = QtGui.QColor(66, 135, 245)
         self.label_bg_color_r = self.init_bg_color
         self.bg_color = self.init_bg_color
-
 
     def check_error(self):
         if self.target_attr_full_path is None:
@@ -313,7 +314,6 @@ class PinNode(DiceNodeBase):
 
     def recalculation(self):
         code_str = ''
-        self_node_id = 'n' + self.id.replace('-', '')
         for _p in self.in_ports:
             if not _p.lines:
                 # ポートにラインがない場合は直値
@@ -341,33 +341,22 @@ class PinNode(DiceNodeBase):
         self.height = _port_y + _p.height_space
 
 
-class ScalarNode(DiceNodeBase):
+class SingleValueNodeBase(DiceNodeBase):
 
     @property
     def save_data(self):
-        data = super(ScalarNode, self).save_data
+        data = super(SingleValueNodeBase, self).save_data
         data['v'] = self.value
         return data
 
+    def __init__(self, name='', label='True'):
+        self.value = ''
+        super(SingleValueNodeBase, self).__init__(name=name, label=label)
+
     def load_data(self, save_data):
         self.value = save_data['v']
-        super(ScalarNode, self).load_data(save_data)
+        super(SingleValueNodeBase, self).load_data(save_data)
         self.update_label()
-
-    def __init__(self, name='', label='0'):
-        self.value = 0
-        super(ScalarNode, self).__init__(name=name, label=label)
-        _t = 'Scalar'
-        _p = self.add_port(port_type='out', color=getattr(PortColor(), _t), value_type=_t, label='Result', value=self.value)
-
-    def mouseDoubleClickEvent(self, event):
-        pos = event.lastScreenPos()
-        value, ok = QtWidgets.QInputDialog.getDouble(self.scene().views()[0], 'Scalar', '', self.value)
-        if not ok:
-            return None
-        self.value = value
-        self.update_label()
-        self.data_changed.emit()
 
     def update_label(self):
         self.label = str(self.value)
@@ -375,53 +364,44 @@ class ScalarNode(DiceNodeBase):
 
     def recalculation(self):
         code_str = ''
-        for _p in self.ports:
+        for _p in self.out_ports:
             if not _p.lines:
                 continue
             node_id = 'n' + str(_p.node.serial_number)
             code_str = code_str + '{0}_{1} = {2}'.format(node_id, _p.name, self.value)
         return code_str
 
-
-class BooleanNode(DiceNodeBase):
-
-    @property
-    def save_data(self):
-        data = super(BooleanNode, self).save_data
-        data['v'] = self.value
-        return data
-
-    def load_data(self, save_data):
-        self.value = save_data['v']
-        super(BooleanNode, self).load_data(save_data)
+    def mouseDoubleClickEvent(self, event):
+        value, ok = self._input_dialog()
+        if not ok:
+            return None
+        self.value = value
         self.update_label()
+        self.data_changed.emit()
+
+
+class ScalarNode(SingleValueNodeBase):
+
+    def __init__(self, name='', label='0'):
+        super(ScalarNode, self).__init__(name=name, label=label)
+        self.value = 0
+        _t = 'Scalar'
+        _p = self.add_port(port_type='out', color=getattr(PortColor(), _t), value_type=_t, label='Result',
+                           value=self.value)
+
+    def _input_dialog(self):
+        return QtWidgets.QInputDialog.getDouble(self.scene().views()[0], 'Scalar', '', self.value)
+
+
+class BooleanNode(SingleValueNodeBase):
 
     def __init__(self, name='', label='True'):
-        self.value = 'True'
         super(BooleanNode, self).__init__(name=name, label=label)
+        self.value = 'True'
         _t = 'Boolean'
         _p = self.add_port(port_type='out', color=getattr(PortColor(), _t), value_type=_t, label='Result', value=10)
 
-    def mouseDoubleClickEvent(self, event):
-        pos = event.lastScreenPos()
-        items = ('True', 'False')
-        value, ok = QtWidgets.QInputDialog.getItem(self.scene().views()[0], 'Boolean', "Value:", items,
-                                                   items.index(self.value), False)
-        if not ok:
-            return None
-        self.value = value
-        self.update_label()
-        self.data_changed.emit()
-
-    def update_label(self):
-        self.label = str(self.value)
-        self.update()
-
-    def recalculation(self):
-        code_str = ''
-        for _p in self.ports:
-            if not _p.lines:
-                continue
-            node_id = 'n' + str(_p.node.serial_number)
-            code_str = code_str + '{0}_{1} = {2}'.format(node_id, _p.name, self.value)
-        return code_str
+    def _input_dialog(self):
+        items = ['True', 'False']
+        return QtWidgets.QInputDialog.getItem(self.scene().views()[0], 'Boolean', "Value:", items,
+                                              items.index(self.value), False)
