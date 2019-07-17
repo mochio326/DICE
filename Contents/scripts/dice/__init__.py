@@ -12,7 +12,7 @@ import json
 import ast
 import os
 import functools
-
+import uuid
 
 class DragLabel(QtWidgets.QLabel):
 
@@ -172,6 +172,9 @@ class Window(MayaQWidgetDockableMixin, QtWidgets.QWidget):
 
         code_str = common.nodes_recalculation(self.view)
         expy = exprespy.create()
+        # exprespyが同一ノード名だとエラーが出た際にうまく動かない…気がするのでおまじない
+        # コードが正常なのに動かなくなるって現状が治るのかは未知数
+        expy = cmds.rename(expy, 'ext_' + str(uuid.uuid4()).replace('-', '_'))
         exprespy.setCode(expy, code_str)
         cmds.addAttr(expy, longName='dice', dt='string')
 
