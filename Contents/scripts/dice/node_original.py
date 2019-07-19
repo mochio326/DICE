@@ -65,6 +65,24 @@ class DiceNodeBase(Node):
         _source_nodes = self.get_source_nodes()
         self.recalculation_weight = len(_source_nodes)
 
+    def cleanup_free_port(self):
+        # フリーポートで定義されているものすべてのコネクションがなくなっている場合
+        # ポートを初期設定に戻す
+        _free_port_connect_line_count = 0
+        for _p in self.children_ports_all_iter():
+            if _p.default_value_type == self.port_cls.free_type_port:
+                _free_port_connect_line_count += len(_p.lines)
+
+        if _free_port_connect_line_count > 0:
+            return
+
+        for _p in self.children_ports_all_iter():
+            if _p.default_value_type == self.port_cls.free_type_port:
+                _p.value_type = self.port_cls.free_type_port
+                _p.color = getattr(PortColor(), _p.value_type)
+                _p.change_to_basic_color()
+            print _p.value_type, _p.default_value_type
+
     def load_data(self, save_data):
         """
         辞書データからノードを再構築する
@@ -89,6 +107,7 @@ class DiceNodeBase(Node):
                     _p.change_to_basic_color()
 
         self.deploying_port()
+        self.cleanup_free_port()
         self.update()
 
     @property

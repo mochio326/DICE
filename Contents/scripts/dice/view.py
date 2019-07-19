@@ -4,6 +4,7 @@ import mochinode.view
 import uuid
 from . import common
 
+
 class DiceView(mochinode.view.View):
     focus_in = QtCore.Signal()
 
@@ -55,6 +56,7 @@ class DiceView(mochinode.view.View):
         self.node_connect_event(node)
 
     def node_connect_event(self, node):
+        node.port_disconnect.connect(lambda: common.all_nodes_cleanup_free_port(self))
         node.port_expanded.connect(self.create_history)
         node.pos_changed.connect(self.create_history)
         node.port_connect_changed.connect(self.create_history)

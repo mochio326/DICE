@@ -35,6 +35,7 @@ class Port(OriginalPort):
         # 一時的に偽装する
         _self_changed = False
         _port_changed = False
+
         if self.value_type == self.free_type_port:
             if self.node.free_port_can_connection_types is not None:
                 if port.value_type not in self.node.free_port_can_connection_types:

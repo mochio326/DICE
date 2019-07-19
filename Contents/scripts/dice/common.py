@@ -40,6 +40,11 @@ def get_save_data(nodes, lines):
     return save_data
 
 
+def all_nodes_cleanup_free_port(view):
+    for _n in Node.scene_nodes_iter(view):
+        _n.cleanup_free_port()
+
+
 def nodes_recalculation(view):
     recalculation_nodes = []
 
