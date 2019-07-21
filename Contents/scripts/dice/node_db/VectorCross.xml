@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Node Group='test' Label="Cross">
+    <Port Type="in" Label="vector0" ValueType="Vector3d" DefaultValue="api.MVector(1, 0, 0)" />
+    <Port Type="in" Label="vector1" ValueType="Vector3d" DefaultValue="api.MVector(1, 0, 0)" />
+    <Port Type="out" Label="Out" ValueType="Vector3d" DefaultValue="api.MVector(1, 0, 0)" />
+    <Code>
+    <Out>
+    x = {{vector0}}.y*{{vector1}}.z-{{vector0}}.z*{{vector1}}.y
+    y = {{vector0}}.z*{{vector1}}.x-{{vector0}}.x*{{vector1}}.z
+    z = {{vector0}}.x*{{vector1}}.y-{{vector0}}.y*{{vector1}}.x
+    {{Out}} = api.MVector(x, y, z)
+    </Out>
+    </Code>
+</Node>

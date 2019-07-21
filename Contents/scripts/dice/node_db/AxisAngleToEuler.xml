@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Node Group='test' Label="Axis Angle to Euler" Width="180">
+    <Port Type="out" Label="X" ValueType="Scalar" DefaultValue="0" />
+    <Port Type="out" Label="Y" ValueType="Scalar" DefaultValue="0" />
+    <Port Type="out" Label="Z" ValueType="Scalar" DefaultValue="0" />
+    <Port Type="in" Label="axis" ValueType="Vector3d" DefaultValue="api.MVector(1, 0, 0)" />
+    <Port Type="in" Label="angle" ValueType="Scalar" DefaultValue="0" />
+    <Code>
+        quat = api.MQuaternion({{angle}}, {{axis}})
+        rot = api.MEulerRotation(0, 0, 0)
+        rot.setValue(quat)
+        <X>
+        {{X}} = rot.x
+        </X>
+        <Y>
+        {{Y}} = rot.y
+        </Y>
+        <Z>
+        {{Z}} = rot.z
+        </Z>
+    </Code>
+</Node>

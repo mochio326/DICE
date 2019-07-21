@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Node Group='test' Label="Dot">
+    <Port Type="in" Label="vector0" ValueType="Vector3d" DefaultValue="api.MVector(1, 0, 0)" />
+    <Port Type="in" Label="vector1" ValueType="Vector3d" DefaultValue="api.MVector(1, 0, 0)" />
+    <Port Type="out" Label="Out" ValueType="Scalar" DefaultValue="0"/>
+    <Code>
+    <Out>{{Out}} = ({{vector0}}.x*{{vector1}}.x)+({{vector0}}.y*{{vector1}}.y)+({{vector0}}.z*{{vector1}}.z)</Out>
+    </Code>
+</Node>
