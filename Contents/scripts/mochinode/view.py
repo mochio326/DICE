@@ -314,7 +314,7 @@ def make_dot(view, file_path, mode='all'):
         _data.extend(get_temp_line_data_for_dot(view))
 
     # ranksep:横のノード間隔　nodesep:縦のノード間隔
-    dot_string = 'digraph sample{graph[rankdir = LR,nodesep=1.25,ranksep=1.5];node [shape=record,width=1.5];'
+    dot_string = 'digraph sample{graph[rankdir = LR,nodesep=1.25,ranksep=1.7];node [shape=record];'
     dot_string = dot_string + '\r\n'.join(_data) + '}'
 
     with open(file_path, mode='w') as f:
@@ -364,8 +364,9 @@ def get_node_data_for_dot(view, iter):
                 if not _pp.check_parent_port_open():
                     continue
                 port_names.append('<{0}>{0}'.format(_pp.name))
-        node_string = '"{0}" [label = "{1}",height={2}];'.format(_n.id, '|'.join(port_names),
-                                                                 len(port_names) * 0.5 + 0.5)
+        node_string = '"{0}" [label = "{1}",fixedsize = true,height={2}, width={3}];'.format(_n.id, '|'.join(port_names),
+                                                                            len(port_names) * 0.5 + 0.5,
+                                                                            _n.width / 80)
         data.append(node_string)
     return data
 
