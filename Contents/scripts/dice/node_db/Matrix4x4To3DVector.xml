@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<Node Group='test' Label="3D Vector to Scalar" Width="200">
+<Node Group='test' Label="Matrix to 3D Vector" Width="200">
     <Port Type="out" Label="Vector1" ValueType="Vector3d" DefaultValue="api.MVector(1, 0, 0)" />
     <Port Type="out" Label="Vector2" ValueType="Vector3d" DefaultValue="api.MVector(0, 1, 0)" />
     <Port Type="out" Label="Vector3" ValueType="Vector3d" DefaultValue="api.MVector(0, 0, 1)" />
