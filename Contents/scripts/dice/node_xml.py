@@ -51,12 +51,17 @@ class XmlNode(DiceNodeBase):
         # ノードからpython実行用のコードに変換
         code_str = format_code(self.code.text) + '\n'
         # まずはoutポートでラインが接続されているもののxml内のコードを収集
+        _out_lines_count = 0
         for _p in self.out_ports:
+            _out_lines_count += len(_p.lines)
             if not _p.lines:
                 continue
             _out_code = self.code.findtext(_p.name)
             if _out_code != '':
                 code_str = code_str + format_code(_out_code) + '\n'
+
+        if _out_lines_count == 0:
+            return ''
 
         # コード内の{{}}で囲まれているポート名をexprespy内の変数に置き換える
         for _p in self.out_ports:
@@ -64,14 +69,21 @@ class XmlNode(DiceNodeBase):
             code_str = code_str.replace('{{' + _p.name + '}}', node_id)
 
         for _p in self.in_ports:
+            _replace_target_port_string = '{{' + _p.name + '}}'
             if not _p.lines:
                 # ポートにラインがない場合はデフォルト値
-                replace_str = str(_p.value)
+                if code_str.count(_replace_target_port_string) <= 1:
+                    replace_str = str(_p.value)
+                else:
+                    replace_str = '_{0}_value'.format(_p.name)
+                    code_str = '{0} = {1}\n{2}'.format(replace_str, str(_p.value), code_str)
             else:
                 source_port = _p.lines[0].source
                 node_id = 'n' + str(source_port.node.serial_number)
                 replace_str = node_id + '_' + source_port.name
-            code_str = code_str.replace('{{' + _p.name + '}}', replace_str)
+            code_str = code_str.replace(_replace_target_port_string, replace_str)
+
+        code_str = '# {0}\n{1}'.format(self.label, code_str)
         return code_str
 
 
